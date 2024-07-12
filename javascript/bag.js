@@ -1,9 +1,51 @@
+const CONVINENT_PRICE = 99
 let bagItemObjects;
 onload();
 function onload() {
   loadBagItemsObjects();
   displayBagItems();
+  displayBagSummery()
 }
+
+ function displayBagSummery() {
+ let bagSummeryElement =  document.querySelector(".bag-summary")
+ let totalItem = bagItemObjects.length;
+ let totalMRP = 0;
+ let totalDiscount = 0;
+ let finalAmount = 0
+bagItemObjects.forEach(bagItem => {
+  totalMRP += bagItem.original_price
+  totalDiscount += bagItem.original_price - bagItem.current_price
+})
+
+finalAmount = totalMRP - totalDiscount + CONVINENT_PRICE
+
+ bagSummeryElement.innerHTML = `
+   <div class="bag-details-container">
+            <div class="price-header">PRICE DETAILS (${totalItem} Items) </div>
+            <div class="price-item">
+              <span class="price-item-tag">Total MRP</span>
+              <span class="price-item-value">₹${totalMRP}</span>
+            </div>
+            <div class="price-item">
+              <span class="price-item-tag">Discount on MRP</span>
+              <span class="price-item-value priceDetail-base-discount">-₹${totalDiscount}</span>
+            </div>
+            <div class="price-item">
+              <span class="price-item-tag">Convenience Fee</span>
+              <span class="price-item-value">₹99</span>
+            </div>
+            <hr>
+            <div class="price-footer">
+              <span class="price-item-tag">Total Amount</span>
+              <span class="price-item-value">₹${finalAmount}</span>
+            </div>
+          </div>
+          <button class="btn-place-order">
+            <div class="css-xjhrni">PLACE ORDER</div>
+          </button>
+ `
+ }
 
 function loadBagItemsObjects() {
   bagItemObjects = Bagitem.map((itemId) => {
@@ -25,8 +67,15 @@ function displayBagItems() {
 }
 
 function removeFromBag(itemId) {
-  Bagitem = Bagitem.filter((bagItemId) => bag);
+  Bagitem = Bagitem.filter((bagItemId) => bagItemId != itemId);
+  localStorage.setItem("Bagitem", JSON.stringify(Bagitem));
+  loadBagItemsObjects()
+  BagitemCount();
+  displayBagItems()
+  displayBagSummery()
 }
+
+
 function generateItemHTML(item) {
   return `<div class="bag-item-container">
             <div class="item-left-part">
@@ -49,6 +98,6 @@ function generateItemHTML(item) {
               </div>
             </div>
 
-            <div class="remove-from-cart" onclick="removeFromBag(${item.id}">X</div>
+              <div class="remove-from-cart" onclick="removeFromBag(${item.id})">X</div>
           </div>`;
 }
